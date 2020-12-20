@@ -91,7 +91,26 @@ app.get('/meds/edit/:id', (req,res)=> {
             return client.query(sql, params)
         })
         .then((results)=> {
-            res.render('meds-edit',{med: results.row[0]})
+            res.render('meds-edit',{med: results.rows[0]})
+        })
+})
+
+app.post('/meds/edit/:id', (req, res) => {
+    const client = new Client({
+        user: 'postgres',
+        host: 'localhost',
+        database: 'medical1',
+        password: '123456',
+        port: '5432'
+    })
+    client.connect()
+        .then(()=> {
+            const sql = "UPDATE meds SET name=$1, count=$2, brand=$3 WHERE mid=$4"
+            const params = [req.body.name, req.body.count, req.body.brand, req.params.id]
+            return client.query(sql, params)
+        })
+        .then((results)=> {
+            res.redirect('/meds')
         })
 })
 
