@@ -37,6 +37,25 @@ client.connect()
     })
 })
 
+app.get('/dashboard', (req, res)=> {
+    const client = new Client({
+        user: 'postgres',
+        host: 'localhost',
+        database: 'medical1',
+        password: '123456',
+        port: '5432'
+    })
+    client.connect() 
+    .then(()=> {
+        return client.query('SELECT SUM(count) FROM meds; SELECT DISTINCT COUNT(brand) FROM meds')
+    })
+    .then((results)=> {
+        console.log('results', results[0])
+        console.log('results', results[1])
+        res.render('dashboard', {n1: results[0].rows, n2:results[1].rows})
+    })
+})
+
 app.get('/meds', (req, res)=> {
     console.log('post body', req.body)
     const client = new Client({
